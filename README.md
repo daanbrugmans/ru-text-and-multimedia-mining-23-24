@@ -1,1 +1,2 @@
-# ru-text-and-multimedia-mining-23-24
+# Text and Multimedia Mining 2023/2024 Assignment
+This repository contains the completed assignments for the Radboud University course [LET-REMA-LCEX06 Text and Multimedia Mining](https://www.ru.nl/courseguides/socsci/courses-osiris/ai/let-rema-lcex06-text-multimedia-mining/) for the school year 2023-2024 as made by [Daan Brugmans](https://github.com/daanbrugmans) and [Janneke Nouwen](https://github.com/JannekeNouwen).
