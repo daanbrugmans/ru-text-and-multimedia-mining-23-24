@@ -1,11 +1,13 @@
 import re
 import string
 import statistics
+import math
 
 import pandas as pd
 import emot
 import nltk
 import contractions
+
 from tqdm import tqdm
 from transformers import AutoModelForSequenceClassification
 from transformers import AutoTokenizer
@@ -19,30 +21,6 @@ nltk.download("universal_tagset")
 
 
 class Featurizer:
-    pos_tags = {
-        "Common Noun": ["NN", "NNS"],
-        "Proper Noun": ["NNP", "NNPS"],
-        "Base Adjective": ["JJ",],
-        "Comparative Adjective": ["JJR",],
-        "Superlative Adjective": ["JJS",],
-        "Base Adverb": ["RB",],
-        "Comparative Adverb": ["RBR",],
-        "Superlative Adverb": ["RBS",],
-        "Infinitive Verb": ["VB",],
-        "Present Tense 1st/2nd Person Verb": ["VBP",],
-        "Present Tense 3rd Person Verb": ["VBZ",],
-        "Past Tense Verb": ["VBD",],
-        "Present Participle Verb": ["VBG",],
-        "Past Participle Verb": ["VBN",],
-        "Modal Auxiliary Verb": ["MD",],
-        "Pronoun": ["PRP", "PRP$"],
-        "Genetive": ["POS",],
-        "Interjection": ["UH",],
-        "Foreign Word": ["FW",],
-        "Numeral": ["CD",],
-        "Parenthesis": ["(", ")"],
-    }
-
     def __init__(self) -> None:
         self.features = [
             "f_small_i_count",
@@ -73,7 +51,39 @@ class Featurizer:
             "f_contraction_count",
             "f_word_without_vowels_count",
             "f_hapax_legomenon_count",
+            "f_mean_word_length",
+            "f_mean_sentence_length",
+            "f_word_length_standard_deviation",
+            "f_sentence_length_standard_deviation",
+            "f_mean_word_frequency",
+            "f_lexical_diversity_coefficient",
+            "f_syntactic_complexity_coefficient",
+            "f_herdans_log_type_token_richness",
         ]
+        
+        self.pos_tags = {
+            "f_pos_common_noun_ratio": ["NN", "NNS"],
+            "f_pos_proper_noun_ratio": ["NNP", "NNPS"],
+            "f_pos_base_adjective_ratio": ["JJ",],
+            "f_pos_comparative_adjective_ratio": ["JJR",],
+            "f_pos_superlative_adjective_ratio": ["JJS",],
+            "f_pos_base_adverb_ratio": ["RB",],
+            "f_pos_comparative_adverb_ratio": ["RBR",],
+            "f_pos_superlative_adverb_ratio": ["RBS",],
+            "f_pos_infinitive_verb_ratio": ["VB",],
+            "f_pos_present_tense_1st_2nd_person_verb_ratio": ["VBP",],
+            "f_pos_present_tense_3rd_person_verb_ratio": ["VBZ",],
+            "f_pos_past_tense_verb_ratio": ["VBD",],
+            "f_pos_present_participle_verb_ratio": ["VBG",],
+            "f_pos_past_participle_verb_ratio": ["VBN",],
+            "f_pos_modal_auxiliary_verb_ratio": ["MD",],
+            "f_pos_pronoun_ratio": ["PRP", "PRP$"],
+            "f_pos_genetive_ratio": ["POS",],
+            "f_pos_interjection_ratio": ["UH",],
+            "f_pos_foreign_word_ratio": ["FW",],
+            "f_pos_numeral_ratio": ["CD",],
+            "f_pos_parenthesis_ratio": ["(", ")"],
+        }
 
         self.sentiment_modelname = "cardiffnlp/twitter-roberta-base-sentiment"
         self.sentiment_tokenizer = AutoTokenizer.from_pretrained(
@@ -90,12 +100,15 @@ class Featurizer:
         """Featurize the texts in the dataset"""
         features_dict: dict[str, list[int | float]] = {i: [] for i in list(self.features)}
         features_dict["index"] = []
+        
+        for key in self.pos_tags:
+            features_dict[key] = []
 
         for document, index in tqdm(zip(dataset["text"], dataset.index), total=len(dataset)):
             sentences: list = nltk.sent_tokenize(document)
             tokens: list = nltk.word_tokenize(document)
 
-            features_dict["f_index"].append(index)
+            features_dict["index"].append(index)
             features_dict["f_small_i_count"].append(self.get_small_i_count(tokens))
             features_dict["f_all_caps_wordcount"].append(self.get_all_caps_wordcount(tokens))
             features_dict["f_sentence_wo_cap_at_start"].append(self.get_sentence_wo_cap_at_start(sentences))
@@ -125,9 +138,21 @@ class Featurizer:
             features_dict["f_contraction_count"].append(self.get_contraction_count(document))
             features_dict["f_word_without_vowels_count"].append(self.get_word_without_vowels_count(tokens))
             features_dict["f_hapax_legomenon_count"].append(self.get_hapax_legomenon_count(tokens))
+            features_dict["f_mean_word_length"].append(self.get_mean_word_length(tokens))
+            features_dict["f_mean_sentence_length"].append(self.get_mean_sentence_length(tokens))
+            features_dict["f_word_length_standard_deviation"].append(self.get_word_length_standard_deviation(tokens))
+            features_dict["f_sentence_length_standard_deviation"].append(self.get_sentence_length_standard_deviation(tokens))
+            features_dict["f_mean_word_frequency"].append(self.get_mean_word_frequency(tokens))
+            features_dict["f_lexical_diversity_coefficient"].append(self.get_lexical_diversity_coefficient(tokens))
+            features_dict["f_syntactic_complexity_coefficient"].append(self.get_syntactic_complexity_coefficient(tokens))
+            features_dict["f_herdans_log_type_token_richness"].append(self.get_herdans_log_type_token_richness(tokens))
+            
+            for key, value in self.get_pos_tag_ratios(tokens, self.pos_tags).items():
+                features_dict[key].append(value)
 
         features_df = pd.DataFrame.from_dict(features_dict)
         features_df = features_df.set_index("index")
+        
         return features_df
 
     def get_small_i_count(self, tokens: list) -> int:
@@ -412,30 +437,30 @@ class Featurizer:
                 
         return hapax_legomenon_count
     
-    def mean_word_length(self, word_tokenized_text: list[str]) -> int:   
-        word_lengths = [len(word) for word in word_tokenized_text]
+    def get_mean_word_length(self, tokens: list[str]) -> int:   
+        word_lengths = [len(word) for word in tokens]
     
         return round(statistics.mean(word_lengths), 3)
 
-    def mean_sentence_length(self, word_tokenized_text: list[str]) -> int:   
-        sentence_lengths = [len(sentence) for sentence in word_tokenized_text]
+    def get_mean_sentence_length(self, tokens: list[str]) -> int:   
+        sentence_lengths = [len(sentence) for sentence in tokens]
         
         return round(statistics.mean(sentence_lengths), 3)
 
-    def word_length_standard_deviation(self, word_tokenized_text: list[str]) -> int:    
-        word_lengths = [len(word) for word in word_tokenized_text]
+    def get_word_length_standard_deviation(self, tokens: list[str]) -> int:    
+        word_lengths = [len(word) for word in tokens]
         
         return round(statistics.stdev(word_lengths), 3)
 
-    def sentence_length_standard_deviation(self, word_tokenized_text: list[str]) -> int:    
-        sentence_lengths = [len(sentence) for sentence in word_tokenized_text]
+    def get_sentence_length_standard_deviation(self, tokens: list[str]) -> int:    
+        sentence_lengths = [len(sentence) for sentence in tokens]
         
         return round(statistics.stdev(sentence_lengths), 3)
 
-    def mean_word_frequency(self, word_tokenized_text: list[str]) -> int:    
+    def get_mean_word_frequency(self, tokens: list[str]) -> int:    
         word_frequencies = {}
         
-        for word in word_tokenized_text:
+        for word in tokens:
             if word not in word_frequencies.keys():
                 word_frequencies[word] = 1
             else:
@@ -443,32 +468,48 @@ class Featurizer:
                             
         return round(statistics.mean(word_frequencies.values()), 3)
 
-    def lexical_diversity_coefficient(self, word_tokenized_text: List[str]) -> int:
+    def get_lexical_diversity_coefficient(self, tokens: list[str]) -> int:
         """From http://repository.utm.md/handle/5014/20225"""
-        total_word_count = word_count(word_tokenized_text)
-        unique_word_count = hapax_legomenon_count(word_tokenized_text)
+        total_word_count = self.get_word_count(tokens)
+        unique_word_count = self.get_hapax_legomenon_count(tokens)
         
         lexical_diversity_coefficient = unique_word_count / total_word_count
         
         return round(lexical_diversity_coefficient, 3)
 
-    def syntactic_complexity_coefficient(self, word_tokenized_text: List[str]) -> int:
+    def get_syntactic_complexity_coefficient(self, tokens: list[str]) -> int:
         """From http://repository.utm.md/handle/5014/20225"""
-        total_word_count = word_count(word_tokenized_text)
-        total_sentence_count = sentence_count(word_tokenized_text)
+        total_word_count = self.get_word_count(tokens)
+        total_sentence_count = self.get_sentence_count(tokens)
         
         syntactic_complexity_coefficient = 1 - total_sentence_count / total_word_count
         
         return round(syntactic_complexity_coefficient, 3)
 
-    def herdans_log_type_token_richness(self, word_tokenized_text: List[str]) -> int:
+    def get_herdans_log_type_token_richness(self, tokens: list[str]) -> int:
         """From https://pubs.asha.org/doi/abs/10.1044/jshr.3203.536"""
-        total_word_count = self.word_count(word_tokenized_text)
-        unique_word_count = self.hapax_legomenon_count(word_tokenized_text)
+        total_word_count = self.get_word_count(tokens)
+        unique_word_count = self.get_hapax_legomenon_count(tokens)
         
         herdans_log_type_token_richness = math.log(unique_word_count) / math.log(total_word_count)
         
         return round(herdans_log_type_token_richness, 3)
+    
+    def get_pos_tag_ratios(self, tokens: list[str], pos_tag_groups: dict[str, list[str]]) -> dict[str, int]:
+        total_word_count = len(tokens)
+        pos_tag_ratios = {}
+        
+        text_pos_tags = [tag for _, tag in nltk.pos_tag(tokens)]
+        
+        for key, value in pos_tag_groups.items():
+            pos_tag_ratios[key] = 0
+            
+            for pos_tag in value:
+                pos_tag_ratios[key] += text_pos_tags.count(pos_tag)
+                
+            pos_tag_ratios[key] = round(pos_tag_ratios[key] / total_word_count, 3)
+        
+        return pos_tag_ratios
 
     # Helper functions
     def _remove_punctuation(self, tokens: list[str]) -> list[str]:

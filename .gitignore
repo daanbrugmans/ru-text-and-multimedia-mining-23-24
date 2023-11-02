@@ -1,5 +1,7 @@
 env
+model_cache
 Assignments/Data/*
+__pycache__
 
 # Created by https://www.toptal.com/developers/gitignore/api/jupyternotebooks
 # Edit at https://www.toptal.com/developers/gitignore?templates=jupyternotebooks

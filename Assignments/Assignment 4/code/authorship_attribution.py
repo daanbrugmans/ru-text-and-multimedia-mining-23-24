@@ -7,10 +7,11 @@ from classifier import Classifier
 
 
 RERUN_FEATURES = False
-os.chdir('[/home/janneke/Documents/Master/Text and Multimedia Mining/Assignment 4/code]')
+# os.chdir('[/home/janneke/Documents/Master/Text and Multimedia Mining/Assignment 4/code]')
 
 
 def main():
+    os.chdir(os.path.join(os.getcwd(), "Assignments", "Assignment 4"))
     featurizer = Featurizer()
 
     full_train_set = get_features(featurizer, RERUN_FEATURES, feature_filename="../data/train_features.csv", filename="../data/pan2324_train_data.csv")
@@ -41,7 +42,7 @@ def get_features(featurizer: Featurizer, rerun_features, feature_filename, filen
         print("Loading features...")
         features = pd.read_csv(feature_filename)
     return data_set.merge(features, left_index=True, right_index=True)
-
+    
 
 if __name__ == "__main__":
     main()
