@@ -24,3 +24,7 @@ class Classifier:
         print(f"F1 score: {f1_score}")
         classification_report = metrics.classification_report(y_true=eval_y, y_pred=predictions)
         print(f"Classification report: {classification_report}")
+
+    def get_f1_score(self, eval_x, eval_y):
+        predictions = self.clf.predict(eval_x)
+        return metrics.f1_score(y_true=eval_y, y_pred=predictions,average="weighted")
