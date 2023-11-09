@@ -10,8 +10,8 @@ from sklearn.svm import SVC
 
 
 class Classifier:
-    def __init__(self) -> None:
-        self.clf = make_pipeline(StandardScaler(), SVC(gamma="auto"))
+    def __init__(self, model=SVC(gamma="auto")) -> None:
+        self.clf = make_pipeline(StandardScaler(), model)
 
     def fit(self, train_x: pd.DataFrame, train_y):
         self.clf.fit(train_x, train_y)
@@ -20,7 +20,7 @@ class Classifier:
         predictions = self.clf.predict(eval_x)
         accuracy = metrics.accuracy_score(y_true=eval_y, y_pred=predictions)
         print(f"Accuracy: {accuracy}")
-        f1_score = metrics.f1_score(y_true=eval_y, y_pred=predictions)
+        f1_score = metrics.f1_score(y_true=eval_y, y_pred=predictions,average="weighted")
         print(f"F1 score: {f1_score}")
         classification_report = metrics.classification_report(y_true=eval_y, y_pred=predictions)
         print(f"Classification report: {classification_report}")
