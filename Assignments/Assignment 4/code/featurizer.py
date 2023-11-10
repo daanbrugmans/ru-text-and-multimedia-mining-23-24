@@ -23,66 +23,66 @@ nltk.download("universal_tagset")
 class Featurizer:
     def __init__(self) -> None:
         self.features = [
-            "f_small_i_count",
-            "f_all_caps_wordcount",
-            "f_sentence_wo_cap_at_start",
-            "f_sentence_lower_at_start",
-            "f_fullstop_wo_whitespace_count",
-            "f_a_an_error_count",
-            "f_cont_punct_count",
-            "f_quotation_count",
-            "f_emoticons_count",
-            "f_happy_emoticons_count",
-            "f_question_count",
-            "f_exclamation_count",
-            "f_sentiment_score_neg",
-            "f_sentiment_score_neu",
-            "f_sentiment_score_pos",
-            "f_he_she_ratio",
-            "f_swear_word_count",
-            "f_character_count",
-            "f_word_count",
-            "f_sentence_count",
-            "f_punctuation_count",
-            "f_digit_count",
-            "f_uppercase_count",
-            "f_short_word_count",
-            "f_alphabet_count",
-            "f_contraction_count",
-            "f_word_without_vowels_count",
-            "f_hapax_legomenon_count",
-            "f_mean_word_length",
-            "f_mean_sentence_length",
-            "f_word_length_standard_deviation",
-            "f_sentence_length_standard_deviation",
-            "f_mean_word_frequency",
-            "f_lexical_diversity_coefficient",
-            "f_syntactic_complexity_coefficient",
-            "f_herdans_log_type_token_richness",
+            "f_g_small_i_count",
+            "f_g_all_caps_wordcount",
+            "f_g_sentence_wo_cap_at_start",
+            "f_g_sentence_lower_at_start",
+            "f_g_fullstop_wo_whitespace_count",
+            "f_g_a_an_error_count",
+            "f_g_cont_punct_count",
+            "f_i_quotation_count",
+            "f_i_emoticons_count",
+            "f_i_happy_emoticons_count",
+            "f_i_question_count",
+            "f_i_exclamation_count",
+            "f_o_sentiment_score_neg",
+            "f_o_sentiment_score_neu",
+            "f_o_sentiment_score_pos",
+            "f_o_he_she_ratio",
+            "f_o_swear_word_count",
+            "f_d_character_count",
+            "f_d_word_count",
+            "f_d_sentence_count",
+            "f_d_punctuation_count",
+            "f_d_digit_count",
+            "f_d_uppercase_count",
+            "f_d_short_word_count",
+            "f_d_alphabet_count",
+            "f_d_contraction_count",
+            "f_d_word_without_vowels_count",
+            "f_d_hapax_legomenon_count",
+            "f_c_mean_word_length",
+            "f_c_mean_sentence_length",
+            "f_c_word_length_standard_deviation",
+            "f_c_sentence_length_standard_deviation",
+            "f_c_mean_word_frequency",
+            "f_c_lexical_diversity_coefficient",
+            "f_c_syntactic_complexity_coefficient",
+            "f_c_herdans_log_type_token_richness",
         ]
         
         self.pos_tags = {
-            "f_pos_common_noun_ratio": ["NN", "NNS"],
-            "f_pos_proper_noun_ratio": ["NNP", "NNPS"],
-            "f_pos_base_adjective_ratio": ["JJ",],
-            "f_pos_comparative_adjective_ratio": ["JJR",],
-            "f_pos_superlative_adjective_ratio": ["JJS",],
-            "f_pos_base_adverb_ratio": ["RB",],
-            "f_pos_comparative_adverb_ratio": ["RBR",],
-            "f_pos_superlative_adverb_ratio": ["RBS",],
-            "f_pos_infinitive_verb_ratio": ["VB",],
-            "f_pos_present_tense_1st_2nd_person_verb_ratio": ["VBP",],
-            "f_pos_present_tense_3rd_person_verb_ratio": ["VBZ",],
-            "f_pos_past_tense_verb_ratio": ["VBD",],
-            "f_pos_present_participle_verb_ratio": ["VBG",],
-            "f_pos_past_participle_verb_ratio": ["VBN",],
-            "f_pos_modal_auxiliary_verb_ratio": ["MD",],
-            "f_pos_pronoun_ratio": ["PRP", "PRP$"],
-            "f_pos_genetive_ratio": ["POS",],
-            "f_pos_interjection_ratio": ["UH",],
-            "f_pos_foreign_word_ratio": ["FW",],
-            "f_pos_numeral_ratio": ["CD",],
-            "f_pos_parenthesis_ratio": ["(", ")"],
+            "f_p_pos_common_noun_ratio": ["NN", "NNS"],
+            "f_p_pos_proper_noun_ratio": ["NNP", "NNPS"],
+            "f_p_pos_base_adjective_ratio": ["JJ",],
+            "f_p_pos_comparative_adjective_ratio": ["JJR",],
+            "f_p_pos_superlative_adjective_ratio": ["JJS",],
+            "f_p_pos_base_adverb_ratio": ["RB",],
+            "f_p_pos_comparative_adverb_ratio": ["RBR",],
+            "f_p_pos_superlative_adverb_ratio": ["RBS",],
+            "f_p_pos_infinitive_verb_ratio": ["VB",],
+            "f_p_pos_present_tense_1st_2nd_person_verb_ratio": ["VBP",],
+            "f_p_pos_present_tense_3rd_person_verb_ratio": ["VBZ",],
+            "f_p_pos_past_tense_verb_ratio": ["VBD",],
+            "f_p_pos_present_participle_verb_ratio": ["VBG",],
+            "f_p_pos_past_participle_verb_ratio": ["VBN",],
+            "f_p_pos_modal_auxiliary_verb_ratio": ["MD",],
+            "f_p_pos_pronoun_ratio": ["PRP", "PRP$"],
+            "f_p_pos_genetive_ratio": ["POS",],
+            "f_p_pos_interjection_ratio": ["UH",],
+            "f_p_pos_foreign_word_ratio": ["FW",],
+            "f_p_pos_numeral_ratio": ["CD",],
+            "f_p_pos_parenthesis_ratio": ["(", ")"],
         }
 
         self.sentiment_modelname = "cardiffnlp/twitter-roberta-base-sentiment"
@@ -109,43 +109,43 @@ class Featurizer:
             tokens: list = nltk.word_tokenize(document)
 
             features_dict["index"].append(index)
-            features_dict["f_small_i_count"].append(self.get_small_i_count(tokens))
-            features_dict["f_all_caps_wordcount"].append(self.get_all_caps_wordcount(tokens))
-            features_dict["f_sentence_wo_cap_at_start"].append(self.get_sentence_wo_cap_at_start(sentences))
-            features_dict["f_sentence_lower_at_start"].append(self.get_sentence_lower_at_start(sentences))
-            features_dict["f_fullstop_wo_whitespace_count"].append(self.get_fullstop_wo_whitespace_count(document))
-            features_dict["f_a_an_error_count"].append(self.get_a_an_error_count(document))
-            features_dict["f_cont_punct_count"].append(self.get_cont_punct_count(tokens))
-            features_dict["f_quotation_count"].append(self.get_quotation_count(document))
-            features_dict["f_emoticons_count"].append(self.get_emoticons_count(document))
-            features_dict["f_happy_emoticons_count"].append(self.get_happy_emoticons_count(document))
-            features_dict["f_question_count"].append(self.get_question_count(sentences))
-            features_dict["f_exclamation_count"].append(self.get_exclamation_count(sentences))
+            features_dict["f_g_small_i_count"].append(self.get_small_i_count(tokens))
+            features_dict["f_g_all_caps_wordcount"].append(self.get_all_caps_wordcount(tokens))
+            features_dict["f_g_sentence_wo_cap_at_start"].append(self.get_sentence_wo_cap_at_start(sentences))
+            features_dict["f_g_sentence_lower_at_start"].append(self.get_sentence_lower_at_start(sentences))
+            features_dict["f_g_fullstop_wo_whitespace_count"].append(self.get_fullstop_wo_whitespace_count(document))
+            features_dict["f_g_a_an_error_count"].append(self.get_a_an_error_count(document))
+            features_dict["f_g_cont_punct_count"].append(self.get_cont_punct_count(tokens))
+            features_dict["f_i_quotation_count"].append(self.get_quotation_count(document))
+            features_dict["f_i_emoticons_count"].append(self.get_emoticons_count(document))
+            features_dict["f_i_happy_emoticons_count"].append(self.get_happy_emoticons_count(document))
+            features_dict["f_i_question_count"].append(self.get_question_count(sentences))
+            features_dict["f_i_exclamation_count"].append(self.get_exclamation_count(sentences))
             neg, neu, pos = self.get_sentiment_score(document)
-            features_dict["f_sentiment_score_neg"].append(neg)
-            features_dict["f_sentiment_score_neu"].append(neu)
-            features_dict["f_sentiment_score_pos"].append(pos)
-            features_dict["f_he_she_ratio"].append(self.get_he_she_ratio(tokens))
-            features_dict["f_swear_word_count"].append(self.get_swear_word_count(document))
-            features_dict["f_character_count"].append(self.get_character_count(document))
-            features_dict["f_word_count"].append(self.get_word_count(tokens))
-            features_dict["f_sentence_count"].append(self.get_sentence_count(sentences))
-            features_dict["f_punctuation_count"].append(self.get_punctuation_count(document))
-            features_dict["f_digit_count"].append(self.get_digit_count(document))
-            features_dict["f_uppercase_count"].append(self.get_uppercase_count(document))
-            features_dict["f_short_word_count"].append(self.get_short_word_count(tokens))
-            features_dict["f_alphabet_count"].append(self.get_alphabet_count(document))
-            features_dict["f_contraction_count"].append(self.get_contraction_count(document))
-            features_dict["f_word_without_vowels_count"].append(self.get_word_without_vowels_count(tokens))
-            features_dict["f_hapax_legomenon_count"].append(self.get_hapax_legomenon_count(tokens))
-            features_dict["f_mean_word_length"].append(self.get_mean_word_length(tokens))
-            features_dict["f_mean_sentence_length"].append(self.get_mean_sentence_length(tokens))
-            features_dict["f_word_length_standard_deviation"].append(self.get_word_length_standard_deviation(tokens))
-            features_dict["f_sentence_length_standard_deviation"].append(self.get_sentence_length_standard_deviation(tokens))
-            features_dict["f_mean_word_frequency"].append(self.get_mean_word_frequency(tokens))
-            features_dict["f_lexical_diversity_coefficient"].append(self.get_lexical_diversity_coefficient(tokens))
-            features_dict["f_syntactic_complexity_coefficient"].append(self.get_syntactic_complexity_coefficient(tokens))
-            features_dict["f_herdans_log_type_token_richness"].append(self.get_herdans_log_type_token_richness(tokens))
+            features_dict["f_o_sentiment_score_neg"].append(neg)
+            features_dict["f_o_sentiment_score_neu"].append(neu)
+            features_dict["f_o_sentiment_score_pos"].append(pos)
+            features_dict["f_o_he_she_ratio"].append(self.get_he_she_ratio(tokens))
+            features_dict["f_o_swear_word_count"].append(self.get_swear_word_count(document))
+            features_dict["f_d_character_count"].append(self.get_character_count(document))
+            features_dict["f_d_word_count"].append(self.get_word_count(tokens))
+            features_dict["f_d_sentence_count"].append(self.get_sentence_count(sentences))
+            features_dict["f_d_punctuation_count"].append(self.get_punctuation_count(document))
+            features_dict["f_d_digit_count"].append(self.get_digit_count(document))
+            features_dict["f_d_uppercase_count"].append(self.get_uppercase_count(document))
+            features_dict["f_d_short_word_count"].append(self.get_short_word_count(tokens))
+            features_dict["f_d_alphabet_count"].append(self.get_alphabet_count(document))
+            features_dict["f_d_contraction_count"].append(self.get_contraction_count(document))
+            features_dict["f_d_word_without_vowels_count"].append(self.get_word_without_vowels_count(tokens))
+            features_dict["f_d_hapax_legomenon_count"].append(self.get_hapax_legomenon_count(tokens))
+            features_dict["f_c_mean_word_length"].append(self.get_mean_word_length(tokens))
+            features_dict["f_c_mean_sentence_length"].append(self.get_mean_sentence_length(tokens))
+            features_dict["f_c_word_length_standard_deviation"].append(self.get_word_length_standard_deviation(tokens))
+            features_dict["f_c_sentence_length_standard_deviation"].append(self.get_sentence_length_standard_deviation(tokens))
+            features_dict["f_c_mean_word_frequency"].append(self.get_mean_word_frequency(tokens))
+            features_dict["f_c_lexical_diversity_coefficient"].append(self.get_lexical_diversity_coefficient(tokens))
+            features_dict["f_c_syntactic_complexity_coefficient"].append(self.get_syntactic_complexity_coefficient(tokens))
+            features_dict["f_c_herdans_log_type_token_richness"].append(self.get_herdans_log_type_token_richness(tokens))
             
             for key, value in self.get_pos_tag_ratios(tokens, self.pos_tags).items():
                 features_dict[key].append(value)
